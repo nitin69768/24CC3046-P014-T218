@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azure Bastion Design Architecture</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f7f9fc;
+    color: #111;
+  }
+  .page {
+    max-width: 1400px;
+    margin: 30px auto;
+    background: white;
+    padding: 30px 40px 45px;
+    box-sizing: border-box;
+  }
+  h1 {
+    text-align: center;
+    margin: 0;
+    font-size: 34px;
+  }
+  .subtitle {
+    text-align: center;
+    margin: 10px 0 28px;
+    font-size: 18px;
+  }
+  .diagram {
+    width: 100%;
+    overflow-x: auto;
+  }
+  svg {
+    width: 100%;
+    min-width: 900px;
+    height: auto;
+    display: block;
+  }
+  h2 {
+    margin-top: 35px;
+    font-size: 22px;
+  }
+  p, li {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  th, td {
+    border: 1px solid #999;
+    padding: 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    font-weight: 700;
+  }
+  .footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Azure Bastion Deployment to Remove Public RDP Access</h1>
+  <div class="subtitle">Design Architecture — Secure administrative access using Azure Bastion and private VM networking</div>
+
+  <div class="diagram">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" role="img" aria-label="Azure Bastion secure RDP architecture diagram">
+      <rect width="1400" height="900" fill="#f7f9fc"/>
+      <text x="700" y="55" text-anchor="middle" font-family="Arial" font-size="34" font-weight="700">Azure Bastion Deployment to Remove Public RDP Access</text>
+      <text x="700" y="90" text-anchor="middle" font-family="Arial" font-size="18">Secure administrative access using Azure Bastion and private VM networking</text>
+
+      <rect x="510" y="125" width="380" height="90" rx="14" fill="#ffffff" stroke="#333333" stroke-width="3"/>
+      <text x="700" y="165" text-anchor="middle" font-family="Arial" font-size="24" font-weight="700">Administrator</text>
+      <text x="700" y="193" text-anchor="middle" font-family="Arial" font-size="17">Azure Portal • HTTPS</text>
+
+      <line x1="700" y1="215" x2="700" y2="270" stroke="#333" stroke-width="4"/>
+      <polygon points="700,270 688,250 712,250" fill="#333"/>
+
+      <rect x="470" y="270" width="460" height="110" rx="15" fill="#eaf3ff" stroke="#1769aa" stroke-width="4"/>
+      <text x="700" y="315" text-anchor="middle" font-family="Arial" font-size="27" font-weight="700">Azure Bastion</text>
+      <text x="700" y="348" text-anchor="middle" font-family="Arial" font-size="17">Managed RDP/SSH • Bastion Public IP</text>
+
+      <line x1="700" y1="380" x2="700" y2="435" stroke="#333" stroke-width="4"/>
+      <text x="725" y="415" font-family="Arial" font-size="16">Private VNet connectivity</text>
+      <polygon points="700,435 688,415 712,415" fill="#333"/>
+
+      <rect x="110" y="435" width="1180" height="355" rx="20" fill="#ffffff" stroke="#555" stroke-width="4"/>
+      <text x="700" y="475" text-anchor="middle" font-family="Arial" font-size="27" font-weight="700">Azure Virtual Network</text>
+
+      <rect x="155" y="515" width="490" height="220" rx="14" fill="#f3f6f8" stroke="#777" stroke-width="3"/>
+      <text x="400" y="555" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700">AzureBastionSubnet</text>
+      <rect x="225" y="600" width="350" height="90" rx="12" fill="#eaf3ff" stroke="#1769aa" stroke-width="3"/>
+      <text x="400" y="638" text-anchor="middle" font-family="Arial" font-size="21" font-weight="700">Bastion Host</text>
+      <text x="400" y="665" text-anchor="middle" font-family="Arial" font-size="15">Dedicated subnet</text>
+
+      <rect x="755" y="515" width="570" height="220" rx="14" fill="#f3f6f8" stroke="#777" stroke-width="3"/>
+      <text x="1040" y="555" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700">Workload / VM Subnet</text>
+      <rect x="855" y="600" width="370" height="90" rx="12" fill="#eef8ee" stroke="#2d7d32" stroke-width="3"/>
+      <text x="1040" y="638" text-anchor="middle" font-family="Arial" font-size="21" font-weight="700">Windows Virtual Machine</text>
+      <text x="1040" y="665" text-anchor="middle" font-family="Arial" font-size="15">Private IP • Network Security Group</text>
+
+      <line x1="645" y1="645" x2="755" y2="645" stroke="#333" stroke-width="4"/>
+      <polygon points="755,645 735,633 735,657" fill="#333"/>
+
+      <rect x="170" y="815" width="330" height="52" rx="10" fill="#ffffff" stroke="#333" stroke-width="2"/>
+      <text x="335" y="848" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700">VM Public IP: NOT REQUIRED</text>
+      <rect x="535" y="815" width="330" height="52" rx="10" fill="#ffffff" stroke="#333" stroke-width="2"/>
+      <text x="700" y="848" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700">Direct RDP 3389: REMOVED</text>
+      <rect x="900" y="815" width="330" height="52" rx="10" fill="#ffffff" stroke="#333" stroke-width="2"/>
+      <text x="1065" y="848" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700">Bastion: SECURE ACCESS</text>
+    </svg>
+  </div>
+
+  <h2>Architecture Overview</h2>
+  <p>
+    The proposed architecture uses Azure Bastion as the managed administrative access layer for a
+    Windows Virtual Machine. The VM is deployed inside an Azure Virtual Network and is accessed
+    through private network connectivity. The final design removes the need for a public IP address
+    on the VM for RDP administration.
+  </p>
+
+  <h2>Architecture Components</h2>
+  <ul>
+    <li><strong>Administrator / Azure Portal:</strong> Starts the remote management session through the Azure Portal.</li>
+    <li><strong>Azure Bastion:</strong> Provides managed RDP/SSH access and acts as the controlled public entry point for administration.</li>
+    <li><strong>Azure Virtual Network:</strong> Provides the private network boundary connecting Bastion and the VM.</li>
+    <li><strong>AzureBastionSubnet:</strong> Dedicated subnet used by Azure Bastion.</li>
+    <li><strong>Workload / VM Subnet:</strong> Contains the Windows VM and its private network interface.</li>
+    <li><strong>Windows Virtual Machine:</strong> Target workload accessed through a private IP.</li>
+    <li><strong>Network Security Group:</strong> Controls network traffic and helps prevent unnecessary public RDP exposure.</li>
+  </ul>
+
+  <h2>Secure Connection Flow</h2>
+  <ol>
+    <li>The administrator signs in to the Azure Portal.</li>
+    <li>The administrator selects the Windows VM and chooses the Bastion connection option.</li>
+    <li>Azure Bastion provides the managed RDP session.</li>
+    <li>Bastion reaches the VM through private VNet connectivity.</li>
+    <li>The VM does not require a direct public IP for this administrative path.</li>
+    <li>NSG rules provide additional network-level traffic control.</li>
+  </ol>
+
+  <h2>Existing vs Proposed Architecture</h2>
+  <table>
+    <tr>
+      <th>Aspect</th>
+      <th>Traditional Direct RDP</th>
+      <th>Proposed Bastion Design</th>
+    </tr>
+    <tr>
+      <td>VM Public IP</td>
+      <td>May be required</td>
+      <td>Not required for Bastion access</td>
+    </tr>
+    <tr>
+      <td>RDP Exposure</td>
+      <td>Potential direct Internet exposure</td>
+      <td>No direct public RDP endpoint on VM</td>
+    </tr>
+    <tr>
+      <td>Access Path</td>
+      <td>Internet → VM</td>
+      <td>Portal → Bastion → Private VM</td>
+    </tr>
+    <tr>
+      <td>Network Model</td>
+      <td>Public endpoint may be used</td>
+      <td>Private workload + dedicated Bastion subnet</td>
+    </tr>
+    <tr>
+      <td>Security Goal</td>
+      <td>Remote administration</td>
+      <td>Remote administration with reduced VM public exposure</td>
+    </tr>
+  </table>
+
+  <h2>Expected Result</h2>
+  <p>
+    The completed implementation should demonstrate that the Windows VM has no direct public IP,
+    direct public RDP exposure is removed, Azure Bastion is deployed and operational, and the
+    administrator can establish an RDP session through Bastion.
+  </p>
+
+  <div class="footer">Azure Bastion Design Architecture • Academic Project</div>
+</div>
+</body>
+</html>
